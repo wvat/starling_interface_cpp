@@ -37,8 +37,15 @@ public:
         this->get_parameter("scale", scale);
 
         // QoS
-		rmw_qos_profile_t qos_profile = rmw_qos_profile_sensor_data;
-		auto qos = rclcpp::QoS(rclcpp::QoSInitialization(qos_profile.history, 5), qos_profile);
+		rmw_qos_profile_t qos_profile = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default))
+                .reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT)
+                .durability(RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL)
+                .lifespan(rclcpp::Duration(2147483651, 294967295))
+                .deadline(rclcpp::Duration(2147483651, 294967295))
+                .liveliness(RMW_QOS_POLICY_LIVELINESS_AUTOMATIC)
+                .liveliness_lease_duration(rclcpp::Duration(2147483651, 294967295)); 
+
+        auto qos = rclcpp::QoS(rclcpp::QoSInitialization(qos_profile.history, 5), qos_profile);
 
         // Velocity Translation (TwistStamped [GNN] to TrajectorySetpoint [PX4])
         gnn_vel_subscription_ = this->create_subscription<geometry_msgs::msg::TwistStamped>(ns + "/cmd_vel", qos, std::bind(&StarlingInterface::publish_trajectory_setpoint, this, std::placeholders::_1));
