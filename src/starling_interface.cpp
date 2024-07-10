@@ -79,7 +79,7 @@ void StarlingInterface::publish_trajectory_setpoint(const geometry_msgs::msg::Tw
 {
     px4::msg::TrajectorySetPoint px4_msg{};
 	msg.position = {std::nanf(""), std::nanf(""), std::nanf("")}; // required for vel control in px4
-	msg.velocity = {gnn_cmd_vel.vx, gnn_cmd_vel.vy, gnn_cmd_vel.vz};
+	msg.velocity = {gnn_cmd_vel.x, gnn_cmd_vel.y, gnn_cmd_vel.z};
 	msg.yaw = -3.14; // [-PI:PI] //TODO
 	msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
 	trajectory_setpoint_publisher_->publish(msg);
